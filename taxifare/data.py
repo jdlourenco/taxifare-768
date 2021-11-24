@@ -1,8 +1,13 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
+BUCKET_NAME = "wagon-768-jdlourenco"
+PATH_TO_DATA = "data/train_1k.csv"
+
 def get_data(nrows=1000):
-    url = "s3://wagon-public-datasets/taxi-fare-train.csv"
+    # url = "s3://wagon-public-datasets/taxi-fare-train.csv"
+    url = f"gs://{BUCKET_NAME}/{PATH_TO_DATA}"
+    print(f"loading the dataset from {url}")
     df = pd.read_csv(url, nrows=nrows)
     return df
 

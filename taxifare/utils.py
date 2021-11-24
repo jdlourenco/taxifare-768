@@ -1,5 +1,9 @@
 import numpy as np
 import joblib
+from google.cloud import storage
+from taxifare.data import BUCKET_NAME
+
+MODEL_PATH = "model2/taxifare/"
 
 def minkowski_distance(df, p,
                        start_lat="pickup_latitude",
@@ -16,4 +20,14 @@ def compute_rmse(y_pred, y_true):
     return np.sqrt(((y_pred - y_true) ** 2).mean())
 
 def save_model(pipeline, model):
-    joblib.dump(pipeline, f"{model}.joblib")
+    model_file_path = f"{model}.joblib"
+    joblib.dump(pipeline, model_file_path)
+    path_inside_bucket = MODEL_PATH + model + ".joblib"
+    
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(path_inside_bucket)
+    
+    print(f"uploading {model_file_path} to {BUCKET_NAME}")
+    blob.upload_from_filename(model_file_path)
+    
